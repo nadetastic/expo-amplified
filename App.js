@@ -1,16 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { withAuthenticator } from 'aws-amplify-react-native';
 
-import secrets from './secrets.json';
+// import secrets from './secrets.json';
 
 import { Amplify, API, Auth } from 'aws-amplify'
 import awsconfig from './src/aws-exports'
 Amplify.configure(awsconfig)
 
-export default function App() {
+function App() {
 
-  const { username, password, code,
-    apiName, path } = secrets;
+  // const { username, password, code,
+  //   apiName, path } = secrets;
 
   const signUp = async () => {
     try {
@@ -68,3 +69,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   }
 });
+
+export default withAuthenticator(App)
