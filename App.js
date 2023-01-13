@@ -4,9 +4,13 @@ import { withAuthenticator } from 'aws-amplify-react-native';
 
 // import secrets from './secrets.json';
 
-import { Amplify, API, Auth } from 'aws-amplify'
+import { Amplify, Auth, Storage } from 'aws-amplify'
 import awsconfig from './src/aws-exports'
+
+Amplify.Logger.LOG_LEVEL = 'DEBUG'
+
 Amplify.configure(awsconfig)
+
 
 function App() {
 
@@ -22,7 +26,7 @@ function App() {
 
   const signIn = async () => {
     try {
-      const res = await Auth.signIn(username,password);
+      const res = await Auth.signIn('dkkiuna11@gmail.com','abcd1234');
       console.log(res);
     } catch(err){ console.error(err) }
   }
@@ -41,11 +45,20 @@ function App() {
     } catch(err) { console.error(err)}
   }
 
-  const FetchFromAPI = async () => {
+  const currentUser = async () => {
     try {
-      const res = await API.get(apiName,path);
+      const res = await Auth.currentAuthenticatedUser()
       console.log(res);
-    } catch (err) { console.error(err); }
+    } catch(err) { console.error(err)}
+  }
+
+  const list = async()=>{
+    try {
+      const res = await Storage.list('');
+      console.log(res);
+    } catch(e){
+      console.log(e);
+    }
   }
 
   return (
@@ -55,7 +68,8 @@ function App() {
       <Button title="Sign In" onPress={signIn} />
       <Button title="Sign Out" onPress={signOut} />
       <Button title="Confirm Sign Up" onPress={confirmSignUp} />
-      <Button title="RestAPI Get" onPress={FetchFromAPI} />
+      <Button title="Current User" onPress={currentUser} />
+      <Button title="Storage List" onPress={list} />
       <StatusBar style="auto" />
     </View>
   );
@@ -70,4 +84,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withAuthenticator(App)
+// export default withAuthenticator(App)
+export default App
