@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { withAuthenticator } from 'aws-amplify-react-native';
 import * as WebBrowser from "expo-web-browser";
@@ -9,6 +10,10 @@ import { Amplify, API, Auth } from 'aws-amplify'
 import awsconfig from './src/aws-exports'
 // Amplify.configure(awsconfig)
 
+import MyStorage from './MyStorage'
+
+
+Amplify.Logger.LOG_LEVEL = 'DEBUG';
 console.log(Linking.createURL('/'))
 
 
@@ -30,6 +35,7 @@ const updatedConfig = {
     ...awsconfig.oauth,
     urlOpener,
   },
+  // storage: MyStorage
 };
 
 Amplify.configure(updatedConfig);
@@ -39,8 +45,10 @@ Amplify.configure(updatedConfig);
 
 function App() {
 
-  const username = ''
-  const password = ''
+  const [user, setUser] = useState(null); 
+
+  const username = 'dkkiuna11@gmail.com'
+  const password = 'abcd1234'
 
   const signUp = async () => {
     try {
@@ -52,13 +60,21 @@ function App() {
   const signIn = async () => {
     console.log('sign in',username,password)
     try {
-      // const res = await Auth.signIn(username,password);
-      // console.log(res);
-      await Auth.federatedSignIn();
+      const res = await Auth.signIn(username,password);
+      setUser(res);
+      console.log('signed in',res);
+      // await Auth.federatedSignIn();
 
     } catch(err){ console.error(err) }
   }
 
+  const confirmSignIn = async () => {
+    const code = ''
+    try {
+      const res = await Auth.confirmSignIn(user,code);
+      console.log(res);
+    } catch(err) { console.error(err)}
+  }
   const signOut = async () => {
     try {
       await Auth.signOut();
@@ -105,6 +121,7 @@ function App() {
       <Button title="Apple Sign In" onPress={() => federated('SignInWithApple')} />
       <Button title="Current User" onPress={currentUser} />
       <Button title="Confirm Sign Up" onPress={confirmSignUp} />
+      <Button title="Confirm Sign In" onPress={confirmSignIn} />
       <Button title="RestAPI Get" onPress={FetchFromAPI} />
       <StatusBar style="auto" />
     </View>
